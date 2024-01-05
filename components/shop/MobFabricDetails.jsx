@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import { FaPlus, FaMinus, FaRegStar } from "react-icons/fa";
-import { fabricDetails } from "../../utils/fabricDetails";
 import Link from "next/link";
 
 const MobFabricDetails = ({ product }) => {
   const [activeIndex, setActiveIndex] = useState(null);
-  const [activeDetail, setActiveDetial] = useState({
-    open: "",
-    product: product.sku,
-  });
 
   const handleClick = (index) => {
     if (activeIndex === index) {
@@ -32,7 +27,7 @@ const MobFabricDetails = ({ product }) => {
         </h2>
         {activeIndex === 0 && (
           <div className="accordion-body py-2">
-            <p>{fabricDetails[activeDetail.product]["description"]}</p>
+            <p>{product.description}</p>
           </div>
         )}
       </div>
@@ -49,7 +44,7 @@ const MobFabricDetails = ({ product }) => {
         {activeIndex === 1 && (
           <div className="accordion-body">
             <p className="pl-8">
-              {fabricDetails[activeDetail.product]["material"].map(
+              {product.material.map(
                 (ele, index) => (
                   <ul key={index}>
                     <li className="py-2 list-disc">{ele}</li>
@@ -74,7 +69,7 @@ const MobFabricDetails = ({ product }) => {
         {activeIndex === 2 && (
           <div className="accordion-body">
             <p className="pl-8">
-              {fabricDetails[activeDetail.product]["care"].map((ele, index) => (
+              {product.care.map((ele, index) => (
                 <ul key={index}>
                   <li className="py-2 list-disc">{ele}</li>
                 </ul>

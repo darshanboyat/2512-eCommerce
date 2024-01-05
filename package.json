@@ -22,6 +22,7 @@
     "cookies-next": "^4.1.0",
     "country-data": "^0.0.31",
     "crypto": "^1.0.1",
+    "currency-converter-lt": "^2.0.1",
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
     "draft-js-import-html": "^1.4.1",

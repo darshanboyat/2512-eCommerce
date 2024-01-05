@@ -3,17 +3,14 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { FaPlus, FaMinus, FaRegStar } from "react-icons/fa";
 
-const FabricDetails = ({ product, setActiveFabricDetails }) => {
-  const [activeIndex, setActiveIndex] = useState(null);
+const FabricDetails = ({ activeFabricDetail, setActiveFabricDetails }) => {
   useEffect(() => {
-    setActiveFabricDetails({
-      open: "description",
-      product: product.sku,
-    });
+    setActiveFabricDetails("description");
   }, []);
 
   const handleClick = (open) => {
-    setActiveFabricDetails({ product: product.sku, open });
+    console.log(open);
+    setActiveFabricDetails(open);
   };
 
   return (
@@ -25,7 +22,7 @@ const FabricDetails = ({ product, setActiveFabricDetails }) => {
         >
           <span className="accordion-header-text">Description</span>
           <span className="accordion-header-icon">
-            {activeIndex === 0 ? <FaMinus /> : <FaPlus />}
+            {activeFabricDetail === "description" ? <FaMinus /> : <FaPlus />}
           </span>
         </h2>
       </div>
@@ -36,7 +33,7 @@ const FabricDetails = ({ product, setActiveFabricDetails }) => {
         >
           <span className="accordion-header-text">Material</span>
           <span className="accordion-header-icon">
-            {activeIndex === 1 ? <FaMinus /> : <FaPlus />}
+            {activeFabricDetail === "material" ? <FaMinus /> : <FaPlus />}
           </span>
         </h2>
       </div>
@@ -48,12 +45,12 @@ const FabricDetails = ({ product, setActiveFabricDetails }) => {
         >
           <span className="accordion-header-text">Care</span>
           <span className="accordion-header-icon">
-            {activeIndex === 2 ? <FaMinus /> : <FaPlus />}
+            {activeFabricDetail === "care" ? <FaMinus /> : <FaPlus />}
           </span>
         </h2>
       </div>
 
-      <Link href="/home/delivery-returns" >
+      <Link href="/home/delivery-returns">
         <a target="_blank">
           <div className="accordion-item hover:cursor-pointer transition-all py-[.6rem] border-b-[1px] !border-black">
             <h2 className="accordion-header flex justify-between font-bold font-lato-regular !text-[1rem] text-[#2F2E2D]">
@@ -61,7 +58,7 @@ const FabricDetails = ({ product, setActiveFabricDetails }) => {
                 Delivery, Returns & Exchange
               </span>
               <span className="accordion-header-icon">
-                {activeIndex === 3 ? <FaMinus /> : <FaPlus />}
+                <FaPlus />
               </span>
             </h2>
           </div>

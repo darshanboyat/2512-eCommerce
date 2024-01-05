@@ -1,8 +1,9 @@
+import authAdminMiddleware from "../../../middleware/authAdmin";
 import { Blog } from "../../../schema/blogs";
 import Order from "../../../schema/orders";
 import { connection } from "../../../utils/database";
 
-export default async function uploadBlog(req, res) {
+async function uploadBlog(req, res) {
   try {
     connection();
 
@@ -29,3 +30,4 @@ export default async function uploadBlog(req, res) {
     });
   }
 }
+export default authAdminMiddleware(uploadBlog)

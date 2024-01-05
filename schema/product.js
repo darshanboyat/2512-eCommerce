@@ -16,7 +16,7 @@ export const Product =
       required: true,
     },
     actualPrice: {
-      type: String,
+      type: Number,
       required: true,
     },
     price: {
@@ -46,6 +46,9 @@ export const Product =
     quantity: {
       type: Number,
     },
+    description: { type: String },
+    care: { type: [String] },
+    material: { type: [String] },
     selling_price: { type: Number, required: true },
     sku: { type: String, required: true },
     units: { type: String, default: "1" },

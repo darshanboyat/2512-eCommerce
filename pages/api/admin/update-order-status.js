@@ -1,7 +1,8 @@
+import authAdminMiddleware from "../../../middleware/authAdmin";
 import Order from "../../../schema/orders";
 import { connection } from "../../../utils/database";
 
-export default async function updateOrderStatus(req, res) {
+async function updateOrderStatus(req, res) {
   try {
     connection();
 
@@ -33,3 +34,4 @@ export default async function updateOrderStatus(req, res) {
     });
   }
 }
+export default authAdminMiddleware(updateOrderStatus)

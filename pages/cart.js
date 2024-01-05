@@ -8,13 +8,16 @@ import Head from "next/head";
 import { useCart } from "react-use-cart";
 import { useEffect } from "react";
 import Link from "next/link";
+import getConvertedCurrency from "../utils/currency";
+import axios from "axios";
 
-const Cart = () => {
+const Cart = ({ currency }) => {
   const { items, isEmpty } = useCart();
   const [user, setUser] = useState(null);
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("user")));
   }, []);
+
   return (
     <div className="relative">
       <Head>
@@ -55,7 +58,12 @@ const Cart = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12 justify-between py-4">
               <div className="lg:col-span-2">
                 {items.map((ele) => (
-                  <Product key={ele.id} item={ele} disableRemove={false} />
+                  <Product
+                    currency={currency}
+                    key={ele.id}
+                    item={ele}
+                    disableRemove={false}
+                  />
                 ))}
               </div>
               <>
@@ -87,13 +95,41 @@ const Cart = () => {
 
 export default Cart;
 
-export function Product({ item }) {
+export const getServerSideProps = async () => {
+  const location = await axios.get("https://ipapi.co/json/");
+
+  return {
+    props: {
+      currency: location.data.currency,
+    },
+  };
+};
+
+export function Product({ currency, item }) {
   const { items, updateItemQuantity, getItem, removeItem } = useCart();
 
   const [quantity, setQuantity] = useState(getItem(item.id).units);
+  const [price, setPrice] = useState("1399");
+  const [actualPrice, setActualPrice] = useState("1399");
   useEffect(() => {
     updateItemQuantity(item.id, quantity);
-  }, [quantity]);
+    getConvertedCurrency(item.price, currency).then((res) => {
+      setPrice(res);
+    });
+    getConvertedCurrency(item.actualPrice, currency).then((res) => {
+      setActualPrice(res);
+    });
+  }, [
+    actualPrice,
+    price,
+    quantity,
+    currency,
+    item.actualPrice,
+    item.id,
+    item.price,
+    updateItemQuantity,
+  ]);
+
   const removeProduct = (id) => {
     removeItem(id);
   };
@@ -109,7 +145,7 @@ export function Product({ item }) {
           className="rounded-xl"
         />
       </div>
-      <div className="flex flex-col justify-center px-4" >
+      <div className="flex flex-col justify-center px-4">
         <div>
           <h2 className="font-sansita-regular !text-xl lg:!text-[2rem]">
             {item.name}
@@ -118,19 +154,19 @@ export function Product({ item }) {
             Size: {item.size}
           </span>
         </div>
-        <span className="font-lato-regular !text-[1rem] !font-semibold pb-2">
-          Color: {"White"}
+        <span className="font-lato-regular capitalize !text-[1rem] !font-semibold pb-2">
+          Color: {item.color}
         </span>
         <span className="flex items-center">
           <span className="font-semibold">Quantity: &nbsp; </span>
           <QuntityCount quantity={quantity} setQuantity={setQuantity} />
         </span>
         <span className="font-lato-regular !font-extrabold py-2 !text-[1.5rem]">
-          ₹{item.price}
+          {price}
         </span>
         <div className="flex items-center leading-3">
           <span className="font-lato-regular !font-extrabold !text-[.75rem] pr-2 line-through">
-            {item.actualPrice}
+            {actualPrice}
           </span>
           <span className="text-xs text-[#FF0909] font-bold">
             {item.offPercentage} OFF

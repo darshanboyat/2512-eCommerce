@@ -5,17 +5,34 @@ import AddProducts from "../../components/admin/AddProducts.jsx";
 import { LuPointer } from "react-icons/lu";
 import { GrAdd } from "react-icons/gr";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Orders = ({ orders }) => {
   const [orderResponse, setOrderResponse] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [addProduct, setAddProduct] = useState(false);
   const ordersPerPage = 10;
+  const router = useRouter();
 
   useEffect(() => {
-    axios.get("/api/admin/get-all-orders").then((res) => {
-      setOrderResponse(res.data);
-    });
+    console.log();
+    if (
+      JSON.parse(localStorage.getItem("user"))?._id !==
+        "65856027c169c5523ff9462e" &&
+      JSON.parse(localStorage.getItem("user"))?.role !== "ADMIN"
+    ) {
+      return router.push("/");
+    }
+    axios
+      .get("/api/admin/get-all-orders", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      })
+      .then((res) => {
+        setOrderResponse(res.data);
+      });
   }, []);
 
   const handleStatusChange = (orderId, event) => {
@@ -74,7 +91,9 @@ const Orders = ({ orders }) => {
                   <td className="border-x-2 border-black px-4 w-fit">
                     {index + 1}
                   </td>
-                  <td className="border-x-2 border-black px-4 py-3">{ele._id}</td>
+                  <td className="border-x-2 border-black px-4 py-3">
+                    {ele._id}
+                  </td>
                   <td className="border-x-2 border-black px-4">{ele.user}</td>
                   <td className="border-x-2 border-black px-4">
                     ₹&nbsp;{ele.totalAmount}
@@ -98,9 +117,7 @@ const Orders = ({ orders }) => {
                   </td>
                   <td className="border-x-2 border-black px-4 cursor-pointer text-blue-500 font-bold">
                     <Link href={`/admin/order/${ele._id}/${ele.user}`}>
-                      <a className="flex items-center">
-                        See Order
-                      </a>
+                      <a className="flex items-center">See Order</a>
                     </Link>
                   </td>
                 </tr>

@@ -6,7 +6,7 @@ import axios from "axios";
 import { memo } from "react";
 import { rediss } from "../../utils/redis";
 
-const TShirt = ({ product }) => {
+const TShirt = ({ postal, currency, product }) => {
   return (
     <main className="bg-[#f2eadf]">
       <Head>
@@ -34,7 +34,11 @@ const TShirt = ({ product }) => {
         {/*Need to update dynamically */}
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {product ? <ProductDetail product={product} /> : <ProductNotFound />}
+      {product ? (
+        <ProductDetail currency={currency} postal={postal} product={product} />
+      ) : (
+        <ProductNotFound />
+      )}
     </main>
   );
 };
@@ -43,11 +47,15 @@ export default memo(TShirt);
 export async function getServerSideProps({ query }) {
   const cachedProduct = await rediss.get(query.slug);
   const parsedProduct = await JSON.parse(cachedProduct);
+  const location = await axios.get("https://ipapi.co/json/");
+  console.log(location.data);
   if (parsedProduct) {
     const updatedProduct = { ...parsedProduct, size: "S" };
     return {
       props: {
         product: { ...updatedProduct, id: parsedProduct._id },
+        postal: location.data.postal,
+        currency: location.data.currency,
       },
     };
   }
@@ -61,6 +69,8 @@ export async function getServerSideProps({ query }) {
   return {
     props: {
       product: { ...updatedProduct, id: product._id },
+      postal: location.data.postal,
+      currency: location.data.currency,
     },
   };
 }

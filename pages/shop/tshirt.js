@@ -63,7 +63,7 @@ export async function getServerSideProps() {
       const res = await axios.get(
         `${process.env.NEXT_API_BASE_URL}/api/get-all-products`
       );
-      await rediss.set("products", JSON.stringify(res.data));
+      await rediss.set("products", JSON.stringify(res.data), "EX", 3600);
       return {
         props: {
           products: res.data.products,

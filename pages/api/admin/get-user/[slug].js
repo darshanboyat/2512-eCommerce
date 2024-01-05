@@ -1,4 +1,3 @@
-import authMiddleware from "../../../../middleware/auth";
 import { User } from "../../../../schema/user";
 import { connection } from "../../../../utils/database";
 
@@ -22,4 +21,4 @@ async function getUser(req, res) {
   }
 }
 
-export default authMiddleware(getUser);
+export default getUser;

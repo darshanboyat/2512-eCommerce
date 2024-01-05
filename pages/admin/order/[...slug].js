@@ -5,7 +5,17 @@ import { FaCheckCircle } from "react-icons/fa";
 import RadioGroup from "../../../components/admin/order/RadioGroup";
 const OrderDetails = ({ order, user }) => {
   const [orderData, setOrderData] = useState(order);
-  const [userData, setUserData] = useState(user);
+  const [userData, setUserData] = useState({});
+  useEffect(() => {
+    setUserData(JSON.parse(localStorage.getItem("user")));
+    if (
+      JSON.parse(localStorage.getItem("user"))._id !==
+        "65856027c169c5523ff9462e" &&
+      JSON.parse(localStorage.getItem("user")).role !== "ADMIN"
+    ) {
+      return router.push("/");
+    }
+  }, [orderData]);
 
   // const fetchOrderData = async (orderId, userId) => {
   // //   try {
@@ -25,7 +35,6 @@ const OrderDetails = ({ order, user }) => {
   // //   }
   // // };
 
-  useEffect(() => {}, [orderData]);
   // useEffect(() => {
   //   fetchOrderData(orderId, userId);
   // }, []);
@@ -123,8 +132,7 @@ const OrderDetails = ({ order, user }) => {
                     <span className="font-semibold">Color:</span> {item.color}
                   </p>
                   <p className="mb-2 whitespace-nowrap">
-                    <span className="font-semibold">Size:</span>{" "}
-                    {item.size}
+                    <span className="font-semibold">Size:</span> {item.size}
                   </p>
                 </div>
                 <div className="flex flex-col justify-center">
@@ -157,13 +165,12 @@ const OrderDetails = ({ order, user }) => {
 export default OrderDetails;
 
 export async function getServerSideProps(context) {
-  const orderRes = await axios.get(`${process.env.NEXT_API_BASE_URL}/api/admin/get-order/${context.query.slug[0]}`)
-  const userRes = await axios.get(`${process.env.NEXT_API_BASE_URL}/api/admin/get-user/${context.query.slug[1]}`)
-
+  const orderRes = await axios.get(
+    `${process.env.NEXT_API_BASE_URL}/api/admin/get-order/${context.query.slug[0]}`
+  );
   return {
     props: {
       order: orderRes.data.order,
-      user: userRes.data.user,
     },
   };
 }

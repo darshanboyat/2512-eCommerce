@@ -3,24 +3,33 @@ import * as Yup from "yup";
 import { RiErrorWarningFill } from "react-icons/ri";
 import { IoArrowForward } from "react-icons/io5";
 import { GrAdd } from "react-icons/gr";
+import axios from "axios";
 
 const ProductForm = () => {
   const initialValues = {
     name: "",
     breadcrumb: "",
-    images: [],
+    sku: "",
+    images: [
+      "https://s3.eu-north-1.amazonaws.com/web.pacchisbarah/images/final_products/LIVE_IN_THE_MOMENT_ORGANIC_T-SHIRT/1.JPG",
+      "https://s3.eu-north-1.amazonaws.com/web.pacchisbarah/images/final_products/LIVE_IN_THE_MOMENT_ORGANIC_T-SHIRT/1.JPG",
+      "https://s3.eu-north-1.amazonaws.com/web.pacchisbarah/images/final_products/LIVE_IN_THE_MOMENT_ORGANIC_T-SHIRT/1.JPG",
+      "https://s3.eu-north-1.amazonaws.com/web.pacchisbarah/images/final_products/LIVE_IN_THE_MOMENT_ORGANIC_T-SHIRT/1.JPG",
+      "https://s3.eu-north-1.amazonaws.com/web.pacchisbarah/images/final_products/LIVE_IN_THE_MOMENT_ORGANIC_T-SHIRT/1.JPG",
+    ],
     actualPrice: "",
     price: 0,
     offPercentage: "30%",
     rating: 0,
     numberOfRatings: 149,
     color: "",
-    category: "T-Shirt",
+    category: "TShirt",
   };
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required(<RiErrorWarningFill />),
     breadcrumb: Yup.string().required(<RiErrorWarningFill />),
+    sku: Yup.string().required(<RiErrorWarningFill />),
     images: Yup.array().required(<RiErrorWarningFill />),
     actualPrice: Yup.string().required(<RiErrorWarningFill />),
     price: Yup.number().required(<RiErrorWarningFill />),
@@ -31,9 +40,25 @@ const ProductForm = () => {
     category: Yup.string().required(<RiErrorWarningFill />),
   });
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     // Handle form submission, you can call your API to save the product data
-    console.log(values);
+    const token = await JSON.parse(localStorage.getItem("token"));
+    // ${process.env.NEXT_API_BASE_URL}
+    await axios
+      .post(
+        `http://localhost:4545/api/admin/add-product`,
+        { ...values, selling_price: values.price },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        alert("Product added successfully....");
+      });
   };
 
   return (
@@ -60,23 +85,41 @@ const ProductForm = () => {
           </div>
         </div>
 
-        <div className="my-2  flex flex-col">
-          <label htmlFor="breadcrumb">Breadcrumb</label>
-          <div className="relative">
-            <Field
-              type="text"
-              id="breadcrumb"
-              name="breadcrumb"
-              className="w-full border-b-2 border-black focus:outline-none active:outline-none"
-            />
-            <ErrorMessage
-              className="absolute right-0 top-2"
-              name="breadcrumb"
-              component="div"
-            />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="my-2  flex flex-col">
+            <label htmlFor="breadcrumb">Breadcrumb</label>
+            <div className="relative">
+              <Field
+                type="text"
+                id="breadcrumb"
+                name="breadcrumb"
+                className="w-full border-b-2 border-black focus:outline-none active:outline-none"
+              />
+              <ErrorMessage
+                className="absolute right-0 top-2"
+                name="breadcrumb"
+                component="div"
+              />
+            </div>
+          </div>
+          <div className="my-2 flex flex-col">
+            <label htmlFor="sku">sku</label>
+            <div className="relative">
+              <Field
+                type="text"
+                id="sku"
+                name="sku"
+                className="w-full border-b-2 border-black focus:outline-none active:outline-none"
+              />
+              <ErrorMessage
+                className="absolute right-0 top-2"
+                name="sku"
+                component="div"
+              />
+            </div>
           </div>
         </div>
-        <div className="my-2 flex flex-col">
+        {/* <div className="my-2 flex flex-col">
           <label htmlFor="images">Images</label>
           <div className="flex flex-row flex-wrap gap-2 justify-between lg:max-w-[50vw] py-1 lg:py-4">
             {[1, 2, 3, 4, 5].map((index) => (
@@ -100,7 +143,7 @@ const ProductForm = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
         <div className="my-2  flex flex-col">
           <label htmlFor="actualPrice">Actual Price</label>
           <div className="relative">
