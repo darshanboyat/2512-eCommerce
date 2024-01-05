@@ -2,8 +2,18 @@ import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import Rating from "../common/RatingStars";
+import getConvertedCurrency from "../../utils/currency";
+import { useState } from "react";
+import { useEffect } from "react";
 
-const ProductCards = ({ products }) => {
+const ProductCards = ({ currency, products }) => {
+  const [price, setPrice] = useState("979")
+  const [actualPrice, setActualPrice] = useState("979")
+  useEffect(()=>{
+    console.log(currency)
+    getConvertedCurrency(979, currency).then((res) => setPrice(res))
+    getConvertedCurrency(1399, currency).then((res) => setActualPrice(res))
+  }, [])
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 justify-center items-center gap-y-4 lg:gap-x-10 lg:gap-y-16">
       {products?.map((ele) => (
@@ -22,10 +32,11 @@ const ProductCards = ({ products }) => {
               </h2>
               <div className="flex items-center">
                 <p className="font-lato-regular !font-semibold !text-[1rem] !leading-[1.5rem]">
-                  ₹{ele.price}
+                  {/* ₹{ele.price} */}
+                  {price}
                 </p>
                 <p className="font-lato-regular !font-semibold !text-[.7rem] !leading-[1.5rem] px-1 line-through">
-                  {ele.actualPrice}
+                  {actualPrice}
                 </p>
                 <p className="font-lato-regular !font-bold !text-[.7rem] text-[#FF0909] !leading-[1.5rem]">
                   {ele.offPercentage} OFF

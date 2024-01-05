@@ -68,7 +68,7 @@ const Cart = ({ currency }) => {
               </div>
               <>
                 {user ? (
-                  <Checkout items={items} />
+                  <Checkout currency={currency} items={items} />
                 ) : (
                   <div className="bg-white rounded-xl h-[96%] relative mb-2 mx-2 flex flex-col justify-center items-center">
                     <h2 className="text-center font-bold text-2xl px-4 ">

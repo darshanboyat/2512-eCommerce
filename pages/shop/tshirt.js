@@ -8,10 +8,11 @@ import SectionOne from "../../components/Collection/SectionOne.jsx";
 import SectionThree from "../../components/Category/SectionThree.jsx";
 import { rediss } from "../../utils/redis";
 
-const Home = ({ products }) => {
+const Home = ({currency, products }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log(currency)
     if (products && products.length > 0) {
       setLoading(false);
     }
@@ -44,7 +45,7 @@ const Home = ({ products }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container bg-[#f2eadf] relative">
-        <SectionOne products={products}>
+        <SectionOne currency={currency} products={products}>
           <Navbar />
         </SectionOne>
         <Footer />
@@ -57,6 +58,8 @@ export default Home;
 
 export async function getServerSideProps() {
   try {
+    const location = await axios.get("https://ipapi.co/json/");
+
     const cachedData = await rediss.get("products");
     const parsedCache = JSON.parse(cachedData);
     if (!parsedCache) {
@@ -67,12 +70,14 @@ export async function getServerSideProps() {
       return {
         props: {
           products: res.data.products,
+          currency: location.data.currency,
         },
       };
     }
     return {
       props: {
         products: parsedCache.products,
+        currency: location.data.currency,
       },
     };
   } catch (error) {
